@@ -560,15 +560,19 @@ module JenkinsApi
       def list_by_status(status, jobs = [])
         jobs = list_all if jobs.empty?
         @logger.info "Obtaining jobs matching status '#{status}'"
-        json_response = @client.api_get_request("", "tree=jobs[name,color]")
-        filtered_jobs = []
-        json_response["jobs"].each do |job|
-          if color_to_status(job["color"]) == status &&
-             jobs.include?(job["name"])
-            filtered_jobs << job["name"]
+        begin
+          json_response = @client.api_get_request("", "tree=jobs[name,color]")
+          filtered_jobs = []
+          json_response["jobs"].each do |job|
+            if color_to_status(job["color"]) == status &&
+               jobs.include?(job["name"])
+              filtered_jobs << job["name"]
+            end
           end
+          filtered_jobs
+        rescue => msg
+          puts "MSG is #{msg}"
         end
-        filtered_jobs
       end
 
       # List all jobs that match the given regex

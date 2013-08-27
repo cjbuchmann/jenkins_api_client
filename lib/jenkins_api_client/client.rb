@@ -139,7 +139,7 @@ module JenkinsApi
         @server_ip = server_uri.host
         @server_port = server_uri.port
         @ssl = server_uri.scheme == "https"
-        @jenkins_path = server_uri.path
+        @jenkins_path = "#{server_uri.to_s}/#{@jenkins_path}"
       end
 
       @jenkins_path ||= ""
@@ -323,6 +323,7 @@ module JenkinsApi
       end
       to_get = URI.escape(to_get)
       request = Net::HTTP::Get.new(to_get)
+      puts "URL IS #{to_get}"
       @logger.info "GET #{to_get}"
       response = make_http_request(request)
       if raw_response
